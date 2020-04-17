@@ -1,0 +1,75 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+
+body {
+    background-image: url(https://www.mbusa.com/content/dam/mb-nafta/us/homepage-redesign/HKW_GTC_Homepage_L.jpg);
+    /* background-image: url(https://www.mbusa.com/content/dam/mb-nafta/us/special-offers/MY21-MARCH-SPECIAL-OFFERS-HEADER.jpg); */
+    background-repeat: no-repeat;
+    /* height: 100vh; */
+    background-size: initial;
+
+}
+
+.container-login {
+    position: absolute;
+    width: 50%;
+    left: 25%;
+    right: 25%;
+    top: 2%;
+    margin: auto;
+    border: 0.1px solid rgb(201, 201, 201);
+    background-image: url(https://www.mbusa.com/content/dam/mb-nafta/us/homepage-redesign/HKW_GTC_Homepage_L.jpg);
+    background-repeat: no-repeat, repeat;
+
+}
+
+.header {
+    margin: auto;
+    width: 100%;
+    display: flex;
+    justify-content: initial;
+    background-color: #000000;
+}
+
+.titleLogin {
+    font-size: 1.6em;
+    font-family: 'Noto Serif', serif;
+    padding: 2%;
+    border-bottom: 1px solid rgb(197, 197, 197);
+}
+
+.logo-MercedesBenz {
+    width: 28%;
+    margin-right: 10%;
+}
+
+.logo-me {
+    width: 39%;
+    height: auto;
+    margin: 3% 0 0 -4%;
+    /* transform: translate(-77px, 26px); */
+
+}
+
+.form-login {
+    width: 69%;
+    margin: auto;
+    margin-top: 4%;
+}
+
+
+
+.btn-Login {
+    width: 23%;
+    margin-bottom: 5%;
+}
+
+/* .button-Login {
+    width: 100%;
+    padding: 1%;
+    background-color: #e7e7e7;
+} */

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log in with your Mercede</title>
+
+  <link rel="icon" type="image/png" href="https://static.thenounproject.com/png/689826-200.png" sizes="32x32">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  
+  <link rel="stylesheet" href="../css/login.css">
+
+
+  <!-- link fontGoogle -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif&display=swap" rel="stylesheet">
+
+  <!-- script -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+  </script>
+
+
+</head>
+
+<body>
+  <div class=" container-login">
+    <div class="header">
+      <a href="/">
+        <img src="https://cdn-iam.mercedes-benz.com/wl/images/MercedesBenz-star-90dc6c1.svg" class="logo-MercedesBenz"
+          class="logo-MercedesBenz" alt="Logo MercedesBenz">
+
+        <img src="https://cdn-iam.mercedes-benz.com/wl/images/Mme_Logo-snowwhite-90dc6c1.svg" class="logo-me"
+          alt="Logo MercedesBenz Me">
+      </a>
+    </div>
+
+    <div class="titleLogin">
+      Log in with your Mercedes me ID
+    </div>
+
+    <div class="form-login">
+
+      <!-- method: là cách truyền dữ liệu đi ( ở đây là post)  -->
+      <!-- action là cái trang sẽ chuyển về trang car khi mà mình bấm submit -->
+      <form method="POST" action="/car">
+        <div class="form-group">
+          <label for="exampleInputEmail1">Email address</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
+          <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Password</label>
+          <input type="password" class="form-control" id="exampleInputPassword1" name="pass">
+        </div>
+        <div class="form-group form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck1">
+          <label class="form-check-label" for="exampleCheck1">Stay logged in</label>
+        </div>
+
+
+        <!-- <button type="submit" class="btn btn-primary btn-Login">Login</button> -->
+        <input type="submit" class="btn btn-primary btn-Login" value = "Login"/>
+
+
+        <!-- <div>
+          <a>Forgot password?</a>
+          <p>Don't you have an account yet?</p>
+        </div> -->
+
+      </form>
+    </div>
+
+    <!-- <div class="button-Login"></div> -->
+
+  </div>
+
+
+
+</body>
+
+</html>

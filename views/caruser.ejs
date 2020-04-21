@@ -86,7 +86,7 @@
 
         <div class="contents">
             <div class="contents-title">
-                <h2>Clients</h2>
+                <h2>Car Clients</h2>
                 <div class="button-add" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap">
                     Add Client
                 </div>
@@ -105,10 +105,8 @@
                 <thead>
                     <tr>
                         <th>Client Images</th>
-                        <th>Client Name</th>
-                        <th>Email</th>
-                        <th>Password</th>
-                        <th>Information</th>
+                        <th>Client Car Name</th>
+                        <th>Vehicle Maintenance</th>
                         <th> </th>
                         <th> </th>
                         <!-- <th>Age</th>
@@ -119,49 +117,30 @@
                 </thead>
 
                 <tbody>
-                    <% list.forEach(function(user){ %>
+                    <% listcaruser.forEach(function(carUser){ %>
                     <tr>
                         <td style="width: 20%;">
-                            
-                            <img src="../uploads/<%= user.images %>" alt=""  style="width: 100%; height: 8rem;"  > 
+                            <img src="../uploads/<%= carUser.images %>" alt=""  style="width: 100%; height: 8rem;"  > 
+                     
                          </td>
-                        <td class="tcenter"><%- user.name %></td>
-                        <td class="tcenter"><%- user.email %></td>
-                        <td class="tcenter"><%- user.password %></td>
-                        <td class="tcenter"><%- user.information %></td>
-
+                        <td class="tcenter"><%- carUser.carName %></td>
+                        <td class="tcenter"><%- carUser.vehicleMaintenance %> </td>
                         <td class="tcenter">
                             <span class="table-edit">
-                                <!-- <ul class="nav flex-column">
-                                    <li class="nav-item"
-                                        style="height: 1.925rem; width: 5rem; background-color: blue; border-radius: 0.2rem; margin: 0 auto;">
-                                        <a href="/edit/<%= user._id %>" 
-                                            style="color: white; width: 100%; height: 1.925rem; text-decoration: none;">
-                                            Edit
-                                        </a>
-                                    </li>
-                                </ul> -->
+                               
 
                                 <button type="button" style="width: 5rem; "
                                     class="btn btn-primary btn-rounded btn-sm my-0 "
-                                    onclick="location.href='/edit/<%= user._id %>'">Edit</button>
+                                    onclick="location.href='/editCarUser/<%= carUser._id %>'"
+                                    >Edit</button>
                             </span>
                         </td>
                         <td class="tcenter">
                             <span class="table-remove">
-                                <!-- <ul class="nav flex-column">
-                                    <li class="nav-item"
-                                        style="height: 1.925rem; width: 5rem; background-color: red; border-radius: 0.2rem; margin: 0 auto;">
-                                        <a href="/delete/<%= user._id %>" 
-                                            style="color: white; width: 100%; height: 1.925rem; text-decoration: none;">
-                                            Delete
-                                        </a>
-                                    </li>
-                                </ul> -->
-
                                 <button type="button" style="width: 5rem; "
                                     class="btn btn-danger btn-rounded btn-sm my-0 "
-                                    onclick="location.href='/delete/<%- user._id %>'">Remove</button>
+                                    onclick="location.href='/deleteCarUser/<%= carUser._id %>'"
+                                    >Remove</button>
                             </span>
                         </td>
 
@@ -173,10 +152,8 @@
                 <tfoot>
                     <tr>
                         <th>Client Images</th>
-                        <th>Client Name</th>
-                        <th>Email</th>
-                        <th>Password</th>
-                        <th>Information</th>
+                        <th>Client Car Name</th>
+                        <th>Vehicle Maintenance</th>
                         <th> </th>
                         <th> </th>
                         <!-- <th>Age</th>
@@ -207,25 +184,15 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/upload" enctype="multipart/form-data">
+                    <form method="POST" action="/uploadCarUser" enctype="multipart/form-data">
                         <div class="form-group">
-                            <label for="recipient-name" class="col-form-label"> Client Name:</label>
-                            <input type="text" class="form-control" id="recipient-name" name="name">
+                            <label for="recipient-name" class="col-form-label"> Car Client :</label>
+                            <input type="text" class="form-control" id="recipient-name" name="carName">
                         </div>
 
                         <div class="form-group">
-                            <label for="recipient-name" class="col-form-label"> Email:</label>
-                            <input type="text" class="form-control" id="recipient-name" name="email">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="recipient-name" class="col-form-label"> Password:</label>
-                            <input type="text" class="form-control" id="recipient-name" name="password">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="message-text" class="col-form-label"> Information:</label>
-                            <textarea class="form-control" id="message-text" name="information"></textarea>
+                            <label for="message-text" class="col-form-label"> Vehicle Maintenance:</label>
+                            <textarea class="form-control" id="message-text" name="vehicleMaintenance"></textarea>
                         </div>
 
                         <input type="file" name="myImage"accept="image/*">
@@ -328,7 +295,7 @@
     var oTable = $('#table').dataTable({
         "aoColumnDefs": [{
                 "bSortable": false,
-                "aTargets": [5, 6]
+                "aTargets": [3, 4]
             },
 
         ]

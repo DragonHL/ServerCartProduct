@@ -3,6 +3,7 @@ const car = require('../Model/car');
 //get tất cả sản phẩm
 exports.getAllCar = function (request, response) {
 
+    console.log(response.data);
     car.find()
     .lean()
         .exec(function (err, data) {

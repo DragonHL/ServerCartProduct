@@ -4,8 +4,11 @@ const bodyParser = require('body-parser');
 // const adminController = require('../controllsers/admin');
 const inforUserController = require('../controllsers/inforUser.js');
 const carController = require('../controllsers/controllersCar.js');
+const carUserController = require('../controllsers/cotrollersCarUser.js');
 const user = require('../Model/user');
 const carProduct = require('../Model/car');
+const carusers = require('../Model/caruser');
+
 
 const express = require('express');
 
@@ -57,6 +60,10 @@ router.get('/edit/:_id', inforUserController.getIdUser);
 
 router.get('/delete/:id', inforUserController.deleteUser);
 
+
+router.get('/caruser', carUserController.getAllCarUser);
+router.get('/editCarUser/:_id', carUserController.getIdCarUser);
+router.get('/deleteCarUser/:id', carUserController.deleteCarUser);
 
 
 
@@ -182,5 +189,48 @@ router.post("/editCar", upload.single('myImageEditCar'), (req, res) => {
 })
 
 
+router.post("/uploadCarUser", upload.single('myImage'), (req, res) => {
+
+    console.log("add car user");
+    let insertCarUser = new carusers({
+        carName: req.body.carName,
+        vehicleMaintenance: req.body.vehicleMaintenance,
+        images: req.file.originalname
+
+    });
+
+    insertCarUser.save(function (err) {
+        if (err) {
+            console.log(err);
+            return;
+        } else {
+            res.redirect('/caruser');
+        }
+    })
+})
+
+router.post("/editCarUser", upload.single('myImageEditCarUser'), (req, res) => {
+    console.log("----------------------------------ID Edit to database");
+    console.log(req.body._id);
+    carusers.updateOne(
+        { _id: req.body._id },
+        {
+            $set: {
+                carName: req.body.carName,
+                vehicleMaintenance: req.body.vehicleMaintenance,
+                images: req.file.originalname
+            }
+        }, (err, doc) => {
+            if (!err) {
+                console.log("----------------------------------Edit to database");
+                console.log(doc);
+                res.redirect('/caruser');
+            } else {
+                console.log('----------------------------------Edit Failed');
+            }
+        }
+    )
+
+})
 
 module.exports = router;

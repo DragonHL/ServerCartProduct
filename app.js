@@ -3,16 +3,15 @@ const express = require('express');
 const app = express();
 var http = require("http").createServer(app);
 var io = require("socket.io").listen(http);
-
-
-
+var fs = require('fs');
 const mongoose = require('mongoose');
 
 const adminRoute = require('./routes/routes.js');
-// const serverClient = require ('./server_client');
-// serverClient.socketU;
 
-const mongodb = require('./mongodb/getdata.js');
+
+// const mongodb = require('./mongodb/getdata.js');
+
+
 
 app.use(adminRoute);
 
@@ -22,7 +21,6 @@ app.use(express.static('public'));
 app.use(express.static('uploads'));
 
 // app.use('/uploads', express.static(__dirname + '/uploads'));
-// app.use('/public', express.static(__dirname + '/public'));
 
 //Set port
 http.listen(process.env.PORT || 3000, function (err) {
@@ -49,13 +47,45 @@ app.set("view engine", "ejs");
 app.set("views", "./views");
 
 
+//----------------------------------------------------------mongodb
+
+// mongodb
+var mongodb = require('mongodb');
+
+
+var MongoClient = mongodb.MongoClient;
+const assert = require('assert');
+
+
+// Connection URL
+const url = 'mongodb://localhost:27017/';
+
+// Database Name
+const dbName = 'car';
+
+// Use connect method to connect to the server
+MongoClient.connect(url, { useUnifiedTopology: true, useNewUrlParser: true }, function (err, client) {
+    assert.equal(null, err);
+    console.log("Mongodb connected successfully to server");
+
+    const db = client.db(dbName);
+    // exports.collectionAdmin = db.collection('admin');
+    // exports.collectionCarU = db.collection('caruser');
+
+    collectionUser = db.collection('users');
+
+    collectionCarUser = db.collection('carusers');
+    collectionCarProduct = db.collection('carproducts');
+
+
+
+    // client.close();
+});
+
+
 
 
 //-------------------------------------------------------- client
-
-
-
-
 
 ////ket noi socket
 io.sockets.on('connection', function (socket) {
@@ -67,7 +97,7 @@ io.sockets.on('connection', function (socket) {
 
         console.log("Event Login User: " + email + " & pass: " + password);
 
-        const cursor = mongodb.collectionUser.find({ email: email });
+        const cursor = collectionUser.find({ email: email });
         cursor.each(function (err, doc) {
             if (err) {
                 console.log(err);
@@ -88,36 +118,7 @@ io.sockets.on('connection', function (socket) {
             }
         });
 
-        // socket.on('loginUser', function (email, password) {
-
-        //     console.log("Event Login User: " + email + " & pass: " + password);
-
-
-        //     collection.find({ email: email }).toArray(function (err, result) {
-
-        //         if (err) {
-        //             console.log(err);
-        //             socket.emit('loginUser', false);
-        //         } else {
-        //             if (result != null) {
-        //                 if (result[0].password == password) {
-        //                     console.log(result[0].password);
-        //                     socket.emit('loginUser', true);
-        //                 } else {
-        //                     socket.emit('loginUser', false);
-        //                 }
-        //             } else {
-        //                 socket.emit('loginUser', false);
-
-        //             }
-        //         }
-        //     });
-
-
     });
-
-
-
 
     ////Register User
     socket.on('registerUser', function (email, password) {
@@ -128,13 +129,13 @@ io.sockets.on('connection', function (socket) {
 
         var user = { email: email, password: password };
 
-        mongodb.collectionUser.insertOne(user, function (err, result) {
+        collectionUser.insertOne(user, function (err, result) {
             if (err) {
                 console.log(err);
                 socket.emit('registerUser', false);
             } else {
                 if (result) {
-                    console.log(result);
+                    // console.log(result);
                     console.log("Insert successful!");
                     socket.emit('registerUser', true);
                 } else {
@@ -153,7 +154,7 @@ io.sockets.on('connection', function (socket) {
 
         console.log("Event updateUser: " + "email " + email + " & pass: " + password);
 
-        mongodb.collectionUser.updateOne(
+        collectionUser.updateOne(
             { email },
             { $set: { password: password } },
             {
@@ -171,16 +172,33 @@ io.sockets.on('connection', function (socket) {
             });
     });
 
-    ////Insert User
-    socket.on('insertInforCarUser', function (carName, information) {
 
-        console.log("There is a connected device Register");
+    //--------------------------------------------------Car User
+    ////Insert Car User
+    socket.on('insertInforCarUser', function (carName, vehicleMaintenance, images) {
 
-        console.log("Event Insert information of User: car name: " + carName + " & information: " + information);
+        console.log("There is a connected device " + socket.id);
 
-        var user = { carName: carName, information: information };
+         console.log("Event Insert information of User: car name: " + carName + " & vehicleMaintenance: " + vehicleMaintenance + " & images: " + images);
 
-        mongodb.collectionCarUser.insertOne(user, function (err, result) {
+        var nameImages = "./public/uploads/" + socket.id.substring(2) + getMilis() + ".png";
+        const images1= socket.id.substring(2) + getMilis() + ".png";
+
+
+        console.log("-------------------------------nameImages: " + nameImages);
+
+        fs.writeFile(nameImages, images, function (err, result) {
+            if (err) {
+                console.log('error', err);
+            } else {
+                console.log('data', images);
+            };
+        });
+
+        var user = { carName: carName, vehicleMaintenance: vehicleMaintenance, images: images1 };
+        console.log("-------------------------------------------------------user")
+        console.log(user);
+        collectionCarUser.insertOne(user, function (err, result) {
             if (err) {
                 console.log(err);
                 socket.emit('insertInforCarUser', false);
@@ -204,7 +222,7 @@ io.sockets.on('connection', function (socket) {
         console.log("----------------------------------------Get Car Infor ");
         console.log("Get Car Infor: " + msg);
 
-        var cursor = mongodb.collectionCarUser.find();
+        var cursor = collectionCarUser.find();
 
         cursor.each(function (err, doc) {
             if (err) {
@@ -212,7 +230,7 @@ io.sockets.on('connection', function (socket) {
             } else {
                 if (doc != null) {
                     var strings = JSON.parse(JSON.stringify(doc));
-                    console.log(strings);
+                    // console.log(strings);
                     socket.emit('getAllInfor', strings);
                 } else if (doc == null) {
                     console.log("finish getAllInfor");
@@ -223,33 +241,112 @@ io.sockets.on('connection', function (socket) {
     });
 
 
-        // Get All Car Product
-        socket.on('getAllCarProduct', function (msg) {
-            console.log("----------------------------------------Get Car Product ");
-            console.log("Get Car Infor: " + msg);
-    
-            var cursor = mongodb.collectionCarProduct.find();
-    
-            cursor.each(function (err, doc) {
+    socket.on('updateCarUser', function (_id, images, carName, vehicleMaintenance) {
+        console.log('IDcarUserUpdate: ' + _id + ' carNameUpdate: ' + carName + ' infocarUserUpdate: ' + vehicleMaintenance + 'imagesUpdate: ' + images);
+      
+        var nameImages = "./public/uploads/" + socket.id.substring(2) + getMilis() + ".png";
+        const images1= socket.id.substring(2) + getMilis() + ".png";
+
+
+        console.log("-------------------------------nameImages: " + nameImages);
+
+        fs.writeFile(nameImages, images, function (err, result) {
+            if (err) {
+                console.log('error', err);
+            } else {
+                console.log('data', images);
+            };
+        });
+      
+      
+      
+        collectionCarUser.update({
+            _id: new mongodb.ObjectID(_id)
+        },
+            {
+                $set: {
+                    carName: carName,
+                    vehicleMaintenance: vehicleMaintenance,
+                    images: images1
+                }
+            }, function (err, result) {
                 if (err) {
                     console.log(err);
+                    socket.emit('updateCarUser', false);
                 } else {
-                    if (doc != null) {
-                        var strings = JSON.parse(JSON.stringify(doc));
-                        console.log(strings);
-                        socket.emit('getAllCarProduct', strings);
-                    } else if (doc == null) {
-                        console.log("finish getAllCarProduct");
-                        console.log("----------------------------------------finish getAllCarProduct");
-                    }
+                    socket.emit('updateCarUser', true);
                 }
-            })
-        });
+            });
+    });
+
+
+    socket.on('deleteCarUser', function (_id) {
+        console.log('id delete Car User ' + _id);
+
+        collectionCarUser.remove(
+            { _id: new mongodb.ObjectID(_id) },
+            {
+                justOne: true
+            },
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                    socket.emit('deleteCarUser', false);
+                } else {
+                    console.log("Delete Car User successfully!");
+                    socket.emit('deleteCarUser', true);
+                }
+            }
+        )
+    });
+
+    //--------------------------------------------------Car Product
+    // Get All Car Product
+    socket.on('getAllCarProduct', function (msg) {
+        console.log("----------------------------------------Get Car Product ");
+        // console.log("Get Car Infor: " + msg);
+
+        var cursor = collectionCarProduct.find();
+
+        cursor.each(function (err, doc) {
+            if (err) {
+                console.log(err);
+            } else {
+                if (doc != null) {
+                    var strings = JSON.parse(JSON.stringify(doc));
+                    // console.log(strings);
+                    socket.emit('getAllCarProduct', strings);
+                } else if (doc == null) {
+                    console.log("finish getAllCarProduct");
+                    console.log("----------------------------------------finish getAllCarProduct");
+                }
+            }
+        })
+    });
 
 
 });
 
-module.exports = io.sockets;
+//------------------------------------------- Client
+
+
+
+function getMilis() {
+    var date = new Date();
+    var milis = date.getTime();
+    return milis;
+    // console.log(milis);
+}
+
+function getFilenameImage(id) {
+    // id.substring(2)là muốn cắt bỏ 2 ký tự đâu bắt đầu lấy từ ký tự thứ 2 của socket.id .
+
+    var nameImages = "images/" + id.substring(2) + getMilis() + ".png";
+    return nameImages;
+
+}
+
+
 
 
 //// Lấy IP theo máy tính
@@ -282,202 +379,6 @@ Object.keys(ifaces).forEach(function (ifname) {
 
 
 //----------------------------------------
-// var http = require('http');
-
-// //router
-// var router = require('router');
-
-// //Create Sever
-// var router = express();
-// var server = http.createServer(router);
-
-// // load image
-// const multer = require('multer');
-// const path = require('path');
-// const fs = require('fs');
-
-// // cho phép người dùng tải xuống những file css
-// router.use('/css', express.static(__dirname + '/css'));
-// router.use('/uploads', express.static(__dirname + '/uploads'));
-// router.use('/public', express.static(__dirname + '/public'));
-// router.use('/public/uploads', express.static(__dirname + '/public/uploads'));
-// router.use(express.static(path.join(__dirname, 'public')));
-
-
-
-// // //body - parser lấy dữ liệu từ form
-// // var bodyParser = require('body-parser');
-// // // parse application/x-www-form-urlencoded
-// // router.use(bodyParser.urlencoded({ extended: false }));
-// // // parse application/json
-// // router.use(bodyParser.json())
-
-// // Import 
-// const loginAdmin = require('./controllsers/admin');
-
-// const server_client = require('./server_loginU');
-// server_client.socketU;
-// const showU = require('./admin/showUser');
-// const user = require('./Model/user');
-// // const mongodb = require('./mongodb/getdata');
-
-
-
-// //Set port
-// server.listen(process.env.PORT || 8080, function (err) {
-//     if (err) {
-//         console.log("err" + err);
-//     } else {
-//         console.log("server running");
-//     }
-// });
-
-// //Routes HTTP GET Request /localhost:8080/
-// router.get('/', function (req, res) {
-//     res.render('index');
-// });
-
-// router.get('/login', function (req, res) {
-//     res.render('login');
-// });
-
-// router.get('/car', function (req, res) {
-//     // res.sendFile(__dirname + '/car.html');
-//     res.render('car');
-// });
-
-// router.post('/car', loginAdmin.login);
-
-// router.get('/user', showU.getAllUser);
-
-// router.post('/user', showU.getAllUser);
-
-// router.post('/user', function (req, res) {
-//     res.render('user');
-// });
-
-// //--------------------------------------------- insert
-
-// // var storage = multer.diskStorage({
-// //     destination: function (req, file, cb) {
-// //         cb(null, './public/uploads')
-// //     },
-
-// //     filename: (req, file, cb) => {
-// //         cb(null, file.originalname);
-// //     },
-
-// // })
-
-// // const upload = multer({
-// //     storage: storage,
-// //     //kiểm tra file upload có phải là hình ảnh hay không
-// //     fileFilter: function (req, file, callback) {
-// //         var ext = path.extname(file.originalname);
-// //         if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
-// //             return callback(new Error('Only images are allowed'));
-// //         }
-// //         callback(null, true);
-// //     },
-// //     limits: {
-// //         fileSize: 1024 * 1024 * 5,//giới hạn filesize = 5Mb
-// //     },
-// // });
-
-
-
-// // router.post("/upload", upload.single('myImage'), (req, res) => {
-// //     console.log('-----------------------------name');
-// //     console.log(req.body.name);
-// //     console.log('-----------------------------name');
-
-// //     let insertUser = new user({
-// //         name: req.body.name,
-// //         email: req.body.email,
-// //         password: req.body.password,
-// //         information: req.body.information,
-// //         images: req.file.originalname
-// //         // images: req.file.originalname
-// //     });
-
-// //     insertUser.save(function (err) {
-// //         if (err) {
-// //             console.log(err);
-// //             return;
-// //         } else {
-// //             res.redirect('user');
-// //         }
-// //     })
-
-// //     // mongodb.collectionUser.insertOne(user1, (err, result) => {
-// //     //     // console.log(result);
-
-// //     //     if (err) {
-// //     //         return console.log(err);
-// //     //     } else {
-// //     //         console.log("Saved to database");
-// //     //         // res.contentType(finalImg.contentType);
-// //     //         // res.send(file.originalname);
-// //     //         res.redirect('user');
-// //     //     }
-
-// //     // })
-// // })
-
-// //---------------------------------------------
-
-// // router.get('/edit/:_id', showU.getIdUser);
-// router.get('/edit/:_id', function (req, res) {
-
-//     user.findById(req.params._id)
-//         .lean()
-//         .exec((err, doc) => {
-//             if (!err) {
-//                 res.render('user', { user: doc });
-//             }
-//         });
-// });
-
-// router.post('/edit', function (req, res) {
-
-//     user.updateOne(
-//         { _id: req.body._id },
-//         {
-//             $set: {
-//                 name: req.body.name,
-//                 email: req.body.email,
-//                 password: req.body.password,
-//                 information: req.body.information,
-//                 // images: req.file.originalname
-//             }
-//         }, (err, doc) => {
-//             if (!err) {
-//                 console.log("----------------------------------Edit to database");
-//                 console.log(doc);
-//                 res.redirect('user');
-//             } else {
-//                 console.log('----------------------------------Edit Failed');
-//             }
-//         }
-//     )
-// });
-
-
-
-
-//----------------------------------------------------------------------------------
-
-// app.get('/car', function (req, res) {
-//     res.render('car');
-// });
-
-// app.get('/car', function (req, res) {
-//     // res.sendFile('car.html', { root: __dirname });
-// });
-
-
-
-// app.get('/user', showUser.showUser);
 
 //Routes HTTP POST  Request
 // app.post('/car', function (req, res) {

@@ -91,23 +91,25 @@
             <!-- display modal edit information user -->
 
 
-            <form method="POST" action="/editCarUser" enctype="multipart/form-data">
+            <form method="POST" action="/editCarUser" enctype="multipart/form-data" style="margin: 0 20px;">
                 <input type="hidden" name="_id" value="<%- caruser._id%>" />
                 <div class="form-group">
-                    <label for="recipient-name" class="col-form-label"> Car Client :</label>
+                    <label for="recipient-name" class="col-form-label" style="font-weight: bold;"> Car Client :</label>
                     <input type="text" class="form-control" id="recipient-name" name="carName" value="<%- caruser.carName%>">
                 </div>
 
                 <div class="form-group">
-                    <label for="message-text" class="col-form-label"> Vehicle Maintenance:</label>
+                    <label for="message-text" class="col-form-label" style="font-weight: bold;"> Vehicle Maintenance:</label>
                     <textarea class="form-control" id="message-text" name="vehicleMaintenance" ><%- caruser.vehicleMaintenance%></textarea>
                 </div>
 
                 <input type="file" name="myImageEditCarUser"accept="image/*">
                 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Edit Car Client</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" style="font-weight: bold;">Edit Car Client</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    onclick="location.href='/caruser'"
+                    >Close</button>
                 </div>
             </form>
 

@@ -18,7 +18,7 @@ MongoClient.connect(url, { useUnifiedTopology: true, useNewUrlParser:true }, fun
     console.log("Mongodb connected successfully to server");
 
     const db = client.db(dbName);
-    // exports.collectionAdmin = db.collection('admin');
+    exports.collectionAdmin = db.collection('admin');
     // exports.collectionUser = db.collection('users');
 
     exports.collectionUser = db.collection('users');

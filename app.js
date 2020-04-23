@@ -35,6 +35,7 @@ http.listen(process.env.PORT || 3000, function (err) {
 mongoose.connect('mongodb://localhost:27017/car', { useNewUrlParser: true, useUnifiedTopology: true }, function (err) {
     if (err) {
         console.log('Mongoose can not connect to mongodb, because ' + err);
+    //    exports.collectionAdmin = db.collection('Admins');
     } else {
         console.log('Mongoose connect to mongodb successful');
     }

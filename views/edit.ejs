@@ -91,26 +91,26 @@
             <!-- display modal edit information user -->
 
 
-            <form action="/edit" method="POST" autocomplete="off" enctype="multipart/form-data" style="margin: 3rem;">
+            <form action="/edit" method="POST" autocomplete="off" enctype="multipart/form-data" style="margin: 0 20px;">
                 <input type="hidden" name="_id" value="<%- user._id%>" />
                 <div class="form-group">
-                    <label for="recipient-name" class="col-form-label"> Edit Client Name:</label>
+                    <label for="recipient-name" class="col-form-label" style="font-weight: bold;"> Edit Client Name:</label>
                     <input type="text" class="form-control" id="recipient-name" name="name" value="<%- user.name%>">
                 </div>
 
                 <div class="form-group">
-                    <label for="recipient-name" class="col-form-label"> Email:</label>
+                    <label for="recipient-name" class="col-form-label" style="font-weight: bold;"> Email:</label>
                     <input type="text" class="form-control" id="recipient-name" name="email" value="<%- user.email%>">
                 </div>
 
                 <div class="form-group">
-                    <label for="recipient-name" class="col-form-label"> Password:</label>
+                    <label for="recipient-name" class="col-form-label" style="font-weight: bold;"> Password:</label>
                     <input type="text" class="form-control" id="recipient-name" name="password"
                         value="<%- user.password%>">
                 </div>
 
                 <div class="form-group">
-                    <label for="message-text" class="col-form-label"> Information:</label>
+                    <label for="message-text" class="col-form-label" style="font-weight: bold;"> Information:</label>
                     <textarea class="form-control" id="message-text"
                         name="information"><%- user.information%></textarea>
                     <!-- <input type="text" class="form-control" id="recipient-name" name="information" value=""> -->
@@ -122,7 +122,9 @@
                 <!-- <input type="submit" value="Upload Photo"> -->
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Edit Client</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    onclick="location.href='/user'"
+                    >Close</button>
                 </div>
 
             </form>

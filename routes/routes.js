@@ -1,13 +1,14 @@
 
 const bodyParser = require('body-parser');
 
-// const adminController = require('../controllsers/admin');
+const adminController = require('../controllsers/admin');
 const inforUserController = require('../controllsers/inforUser.js');
 const carController = require('../controllsers/controllersCar.js');
 const carUserController = require('../controllsers/cotrollersCarUser.js');
 const user = require('../Model/user');
 const carProduct = require('../Model/car');
 const carusers = require('../Model/caruser');
+const admins = require('../Model/admin');
 
 
 const express = require('express');
@@ -15,8 +16,6 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-
-
 
 
 //router
@@ -28,7 +27,83 @@ router.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 router.use(bodyParser.json());
 
-//------------------------------------------------
+
+
+//------------------------------------------------------------------------
+
+// Sử dụng thư viện PassportJS để kiểm tra đăng nhập.
+
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
+//cấu hình passport
+router.use(session({
+    secret: 'mysecret',//thuôc tính bắt buộc
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 1000 * 60 * 5,
+    },
+    //cookie sẽ tồn tại trong 5 phút, nếu xóa dòng code sau thì cookie sẽ hết hạn sau khi đóng trinh duyệt
+}));
+
+//2 hàm khởi tạo passport
+router.use(passport.initialize());
+router.use(passport.session());
+
+//chứng thực thông tin đăng nhập trên mongoDB
+passport.use(new LocalStrategy({
+    //emailAdmin, passwordAdmin là name của thẻ input trong form login, nếu không khai báo mặc định sẽ là username, password
+    usernameField: 'emailAdmin',
+    passwordField: 'passwordAdmin',
+}, (emailAdmin, passwordAdmin, done) => {
+    admins.findOne({ emailAdmin: emailAdmin, passwordAdmin: passwordAdmin }, function (err, userP) {
+        console.log(userP);
+        if (err) {
+            console.log(err);
+        } else if (userP) {
+            //thành công sẽ trả về true với giá trị user
+            return done(null, userP);
+        } else {
+            return done(null, false);
+        }
+    });
+}
+
+));
+
+//sau khi chứng thức thành công passport sẽ gọi hàm .serializeUser() vói tham số user giá trị đã lưu bên trên
+//chọn thuộc tính email của user để ghi vào cookie
+
+passport.serializeUser((userP, done)=>{
+    done(null, userP.emailAdmin);
+})
+
+//biến cookieID chính là giá trị user.email bên trên
+passport.deserializeUser((cookieID, done)=>{
+    admins.findOne({emailAdmin: cookieID}, function(err, userP){
+        if(err){
+            console.log(err);
+        }else if(userP){
+            return done(null, userP);
+        }else{
+            return done(null, false);
+        }
+    });
+});
+
+//khai báo phương thức xác thực đăng nhập sau
+const isAuthenticated = function(request, response, next){
+    if(request.isAuthenticated()){
+        return next();
+    }
+    response.redirect('/login'); //nếu chưa đăng nhập sẽ quay về trang login
+}
+
+
+//---------------------------------------------------------------------------
+
 
 router.get('/', function (req, res) {
     res.render('index');
@@ -38,11 +113,14 @@ router.get('/login', function (req, res) {
     res.render('login');
 });
 
+router.post('/login', passport.authenticate('local', {successRedirect: '/car', failureRedirect: '/login'}));
+
 // router.post('/login', adminController.login);
 
 
-router.get('/car', carController.getAllCar);
-router.post('/car', carController.getAllCar);
+
+router.get('/car', isAuthenticated,carController.getAllCar);
+router.post('/car',isAuthenticated, carController.getAllCar);
 
 
 router.get('/editCar/:_id', carController.getIdCar);
@@ -52,7 +130,7 @@ router.get('/deleteCar/:id', carController.deleteCar);
 //     res.render('uploadCar');
 // });
 
-router.get('/user', inforUserController.getAllUser);
+router.get('/user',isAuthenticated, inforUserController.getAllUser);
 
 router.get('/edit/:_id', inforUserController.getIdUser);
 
@@ -61,7 +139,7 @@ router.get('/edit/:_id', inforUserController.getIdUser);
 router.get('/delete/:id', inforUserController.deleteUser);
 
 
-router.get('/caruser', carUserController.getAllCarUser);
+router.get('/caruser',isAuthenticated, carUserController.getAllCarUser);
 router.get('/editCarUser/:_id', carUserController.getIdCarUser);
 router.get('/deleteCarUser/:id', carUserController.deleteCarUser);
 
@@ -232,5 +310,10 @@ router.post("/editCarUser", upload.single('myImageEditCarUser'), (req, res) => {
     )
 
 })
+
+
+
+
+
 
 module.exports = router;

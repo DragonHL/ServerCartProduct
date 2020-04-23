@@ -81,9 +81,6 @@
         <div class="contents">
             <div class="contents-title">
                 <h2>Edit Car</h2>
-                <div class="button-add" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap">
-                    Add Car
-                </div>
             </div>
 
 
@@ -91,20 +88,20 @@
             <!-- display modal edit information user -->
 
 
-            <form method="POST" action="/editCar" enctype="multipart/form-data">
+            <form method="POST" action="/editCar" enctype="multipart/form-data" style="margin: 0 20px;">
                 <input type="hidden" name="_id" value="<%- car._id%>" />
                 <div class="form-group">
-                    <label for="recipient-name" class="col-form-label"> Car Name:</label>
+                    <label for="recipient-name" class="col-form-label" style="font-weight: bold;"> Car Name:</label>
                     <input type="text" class="form-control" id="recipient-name" name="nameCar" value="<%- car.nameCar%>">
                 </div>
 
                 <div class="form-group">
-                    <label for="recipient-name" class="col-form-label"> Car Price:</label>
+                    <label for="recipient-name" class="col-form-label" style="font-weight: bold;"> Car Price:</label>
                     <input type="text" class="form-control" id="recipient-name" name="priceCar" value="<%- car.priceCar%>">
                 </div>
 
                 <div class="form-group">
-                    <label for="message-text" class="col-form-label">Vehicle information:</label>
+                    <label for="message-text" class="col-form-label" style="font-weight: bold;">Vehicle information:</label>
                     <textarea class="form-control" id="message-text" name="inforCar"><%- car.inforCar%></textarea>
                 </div>
 
@@ -113,7 +110,9 @@
 
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" >Edit Car</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    onclick="location.href='/car'"
+                    >Close</button>
                 </div>
             </form>
 
